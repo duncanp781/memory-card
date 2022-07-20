@@ -7,22 +7,24 @@ function Game(props) {
   const [level, setLevel] = useState(3);
   const [totalScore, setTotalScore] = useState(0);
 
+  let {lose, win} = props;
+
   const reset = useCallback((lvl, newScore = 0) => {
     setLevel(lvl);
     setCards(createCards(lvl));
     setScore(newScore);
   }, []);
 
-  const lose = () => {
-    props.lose(totalScore, level - 2);
+  const loseGame = useCallback(() => {
+    lose(totalScore, level - 2);
     reset(3);
     setTotalScore(0);
-  };
+  }, [totalScore, lose, reset, setTotalScore, level]);
 
   const onClick = (e) => {
     let target = cards[e.target.id];
     if (target.selected) {
-      lose();
+      loseGame();
     } else {
       setScore(score + 1);
       setTotalScore(totalScore + 1);
@@ -42,25 +44,29 @@ function Game(props) {
 
   useEffect(() => {
     if (score === level) {
-      props.win(totalScore, level - 2);
+      win(totalScore, level - 2);
       reset(level + 1, 0);
     }
-  }, [score, level, props, reset, totalScore]);
+  }, [score, level, win, reset, totalScore]);
 
   return (
     <div name="game" className="game">
-      <div>Current Level: {level - 2}</div>
-      <div>Current Score: {score}</div>
-      {randomizeArray(Object.keys(cards)).map((entry) => {
-        return (
-          <Card
-            key={entry}
-            id={entry}
-            number={cards[entry].number}
-            onClick={onClick}
-          />
-        );
-      })}
+      <div className="gameInfo">
+        <div>Current Level: {level - 2}</div>
+        <div>Current Score: {score}</div>
+      </div>
+      <div className="cards">
+        {randomizeArray(Object.keys(cards)).map((entry) => {
+          return (
+            <Card
+              key={entry}
+              id={entry}
+              number={cards[entry].number}
+              onClick={onClick}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
