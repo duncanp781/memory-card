@@ -7,7 +7,7 @@ function Game(props) {
   const [level, setLevel] = useState(3);
   const [totalScore, setTotalScore] = useState(0);
 
-  let {lose, win} = props;
+  let { lose, win } = props;
 
   const reset = useCallback((lvl, newScore = 0) => {
     setLevel(lvl);
@@ -82,9 +82,12 @@ function Card(props) {
 
 function createCards(lvl) {
   let cards = {};
+  let usedNums = []
   for (let i = 0; i < lvl; i++) {
+    let randInt = generateNumWithExceptions(100 + lvl*5, usedNums);
+    usedNums.push(randInt);
     cards[uniqid()] = {
-      number: i + 1,
+      number: randInt,
       selected: false,
     };
   }
@@ -94,6 +97,16 @@ function createCards(lvl) {
 function randomizeArray(arr) {
   let random = arr.sort(() => (Math.random() > 0.5 ? 1 : -1));
   return random;
+}
+
+function generateNumWithExceptions(range, usedNums) {
+  while (true) {  
+    let randint = Math.floor(range*(Math.random()));
+    if (usedNums.includes(randint)){
+      continue;
+    }
+    return randint;
+  }
 }
 
 export default Game;

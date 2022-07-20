@@ -95,6 +95,10 @@ header{
   justify-content: center;
 }
 
+.card:active{
+  background-color:#9ca3af;
+}
+
 
 .gameInfo{
   display: flex;
